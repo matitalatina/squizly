@@ -19,13 +19,13 @@ export const ffmpeg = {
     const command = Ffmpeg();
     const pathSplit = pathIn.split(".");
     const extension = pathSplit.pop();
-    const pathOut = pathSplit.join(".") + "-out." + extension;
+    const pathOut = pathSplit.join(".") + "-squizly." + extension;
     command
       .input(pathIn)
       .videoCodec("libx264")
       .audioCodec("aac")
       .audioBitrate("128k")
-      .addOptions(["-crf 27", "-preset slow"])
+      .addOptions(["-crf 35", "-preset slow"])
       .on("progress", onProgress)
       .on("end", () => {
         shell.showItemInFolder(pathOut);
