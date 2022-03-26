@@ -1,5 +1,14 @@
-import { Box, Center, Group, MantineTheme, Progress } from "@mantine/core";
+import {
+  Box,
+  Center,
+  Group,
+  MantineTheme,
+  Progress,
+  useMantineTheme,
+  Text,
+} from "@mantine/core";
 import React, { Reducer, useReducer } from "react";
+import { Check, FileDownload } from "tabler-icons-react";
 
 type DropStateInitial = {
   state: "INITIAL";
@@ -57,6 +66,8 @@ export const Drop = ({ className }: { className?: string }) => {
     //   },
     // }
   );
+  const theme = useMantineTheme();
+  const accentColors = colorFromState(theme, state);
   return (
     <Box
       className={className}
@@ -107,7 +118,7 @@ export const Drop = ({ className }: { className?: string }) => {
         width: "100%",
         height: "100%",
         transition: "all 300ms ease-out",
-        backgroundColor: colorFromState(theme, state)[1],
+        backgroundColor: accentColors[1],
         padding: 0,
         margin: 0,
       })}
@@ -115,7 +126,7 @@ export const Drop = ({ className }: { className?: string }) => {
       <Center
         sx={(theme) => ({
           transition: "all 300ms ease-out",
-          border: `5px dashed ${colorFromState(theme, state)[2]}`,
+          border: `5px dashed ${accentColors[2]}`,
           borderRadius: 30,
           padding: 0,
           margin: 10,
@@ -127,12 +138,35 @@ export const Drop = ({ className }: { className?: string }) => {
           bottom: 0,
         })}
       >
-        {["INITIAL"].includes(state.state) && "Drop the video here"}
-        {state.state === "HOVER_FORBIDDEN" && "The file is not a video"}
-        {state.state === "HOVER_ALLOWED" && "Drop it!"}
+        {["INITIAL"].includes(state.state) && (
+          <Group position="center" direction="column">
+            <FileDownload size={100} color={accentColors[2]} />
+            <Text size="xl" color={accentColors[5]}>
+              Drop the video here
+            </Text>
+          </Group>
+        )}
+        {state.state === "HOVER_FORBIDDEN" && (
+          <Group position="center" direction="column">
+            <FileDownload size={100} color={accentColors[2]} />
+            <Text size="xl" color={accentColors[5]}>
+              The file is not a video
+            </Text>
+          </Group>
+        )}
+        {state.state === "HOVER_ALLOWED" && (
+          <Group position="center" direction="column">
+            <FileDownload size={100} color={accentColors[2]} />
+            <Text size="xl" color={accentColors[5]}>
+              Drop it!
+            </Text>
+          </Group>
+        )}
         {state.state === "PROGRESS" && (
           <Group direction="column" position="center">
-            <p>Working on it... </p>
+            <Text size="xl" color={accentColors[5]}>
+              Working on it...{" "}
+            </Text>
             <Progress
               sx={{
                 width: 300,
@@ -146,7 +180,14 @@ export const Drop = ({ className }: { className?: string }) => {
             />
           </Group>
         )}
-        {state.state === "COMPLETE" && <p>Completed!</p>}
+        {state.state === "COMPLETE" && (
+          <Group position="center" direction="column">
+            <Check size={100} color={accentColors[2]} />
+            <Text size="xl" color={accentColors[5]}>
+              Completed!
+            </Text>
+          </Group>
+        )}
       </Center>
     </Box>
   );
