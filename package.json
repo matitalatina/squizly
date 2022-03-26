@@ -1,8 +1,8 @@
 {
   "name": "squizly",
-  "productName": "squizly",
+  "productName": "Squizly",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Compress videos quickly",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -14,14 +14,15 @@
   "keywords": [],
   "author": {
     "name": "Mattia Natali",
-    "email": "mattia.natali@klarna.com"
+    "email": "matitalatina@gmail.com"
   },
   "license": "MIT",
   "config": {
     "forge": {
       "packagerConfig": {
         "extraResource": [
-          "resources/mac/ffmpeg"
+          "resources/mac/ffmpeg",
+          "resources/mac/ffprobe"
         ]
       },
       "makers": [

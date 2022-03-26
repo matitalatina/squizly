@@ -82,12 +82,7 @@ export const Drop = ({ className }: { className?: string }) => {
             (p) => {
               dispatch({
                 state: "PROGRESS",
-                progress: {
-                  percent: Math.max(
-                    p.percent,
-                    state.state === "PROGRESS" ? state.progress.percent : 0
-                  ),
-                },
+                progress: p,
               });
             },
             () => {
@@ -136,6 +131,7 @@ export const Drop = ({ className }: { className?: string }) => {
           right: 0,
           left: 0,
           bottom: 0,
+          pointerEvents: "none",
         })}
       >
         {["INITIAL"].includes(state.state) && (
