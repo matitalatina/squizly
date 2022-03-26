@@ -1,4 +1,5 @@
 import Ffmpeg from "fluent-ffmpeg";
+import { shell } from "electron";
 
 // {"frames":302,"currentFps":57,"currentKbps":553.9,"targetSize":256,"timemark":"00:00:03.78","percent":25.062988993502184}
 export interface FfmpegProgress {
@@ -18,6 +19,7 @@ export const ffmpeg = {
     const command = Ffmpeg();
     const pathSplit = pathIn.split(".");
     const extension = pathSplit.pop();
+    const pathOut = pathSplit.join(".") + "-out." + extension;
     command
       .input(pathIn)
       .videoCodec("libx264")
@@ -25,8 +27,10 @@ export const ffmpeg = {
       .audioBitrate("128k")
       .addOptions(["-crf 27", "-preset slow"])
       .on("progress", onProgress)
-      .on("end", onEnd)
-      .saveToFile(pathSplit.join(".") + "-out." + extension)
-      .run();
+      .on("end", () => {
+        shell.showItemInFolder(pathOut);
+        onEnd();
+      })
+      .saveToFile(pathOut);
   },
 };

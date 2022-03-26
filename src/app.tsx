@@ -1,4 +1,4 @@
-import { Center, Grid, Group, MantineProvider } from "@mantine/core";
+import { Group, MantineProvider } from "@mantine/core";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Drop } from "./drop";
@@ -16,7 +16,7 @@ export const App = () => {
 };
 
 function render() {
-  ReactDOM.render(<App />, document.body);
+  ReactDOM.render(<App />, document.getElementById("root"));
 }
 
 render();
