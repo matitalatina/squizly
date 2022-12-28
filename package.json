@@ -20,6 +20,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
+        "icon": "resources/icon",
         "extraResource": [
           "resources/mac/ffmpeg",
           "resources/mac/ffprobe"

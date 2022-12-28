@@ -89,4 +89,5 @@ typings/
 out/
 
 # Resources
-resources/mac/
+resources/darwin*
+resources/mac*
