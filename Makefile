@@ -26,13 +26,13 @@ resources/darwin-x64/ffprobe:
 
 arm64-resources: resources/darwin-arm64/ffmpeg resources/darwin-arm64/ffprobe
 	mkdir -p resources/mac/
-	ln -sf "${PWD}/resources/darwin-arm64/ffmpeg" 'resources/mac/ffmpeg'
-	ln -sf "${PWD}/resources/darwin-arm64/ffprobe" 'resources/mac/ffprobe'
+	ln -f "${PWD}/resources/darwin-arm64/ffmpeg" 'resources/mac/ffmpeg'
+	ln -f "${PWD}/resources/darwin-arm64/ffprobe" 'resources/mac/ffprobe'
 
 x64-resources: resources/darwin-x64/ffmpeg resources/darwin-x64/ffprobe
 	mkdir -p resources/mac/
-	ln -sf "${PWD}/resources/darwin-x64/ffmpeg" 'resources/mac/ffmpeg'
-	ln -sf "${PWD}/resources/darwin-x64/ffprobe" 'resources/mac/ffprobe'
+	ln -f "${PWD}/resources/darwin-x64/ffmpeg" 'resources/mac/ffmpeg'
+	ln -f "${PWD}/resources/darwin-x64/ffprobe" 'resources/mac/ffprobe'
 
 arm64-%: arm64-resources
 	${MAKE} .$* ARCH=arm64

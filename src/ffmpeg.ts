@@ -18,8 +18,8 @@ export const ffmpeg = {
   ) => {
     const command = Ffmpeg();
     const pathSplit = pathIn.split(".");
-    const extension = pathSplit.pop();
-    const pathOut = pathSplit.join(".") + "-squizly." + extension;
+    pathSplit.pop();
+    const pathOut = pathSplit.join(".") + "-squizly.mp4";
     command
       .input(pathIn)
       .videoCodec("libx264")
