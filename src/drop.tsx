@@ -21,6 +21,7 @@ type DropStateComplete = {
 type DropStateProgress = {
   state: "PROGRESS";
   progress: { percent: number };
+  stop: () => void;
 };
 
 type DropHoverAllowed = {
@@ -77,19 +78,23 @@ export const Drop = ({ className }: { className?: string }) => {
           e.dataTransfer.files[0] &&
           e.dataTransfer.files[0].type.startsWith("video")
         ) {
-          window.ffmpeg.start(
+          const stop = window.ffmpeg.start(
             e.dataTransfer.files[0].path,
-            (p) => {
+            (p, stop) => {
               dispatch({
                 state: "PROGRESS",
                 progress: p,
+                stop
               });
+            },
+            () => {
+              dispatch({ state: "COMPLETE" });
             },
             () => {
               dispatch({ state: "COMPLETE" });
             }
           );
-          dispatch({ state: "PROGRESS", progress: { percent: 0 } });
+          dispatch({ state: "PROGRESS", progress: { percent: 0 }, stop });
         } else {
           dispatch({ state: "INITIAL" });
         }

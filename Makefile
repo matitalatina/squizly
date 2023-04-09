@@ -5,11 +5,12 @@ resources/darwin-arm64/ffmpeg:
 	echo '  extracting'
 	unzip -o -d resources/darwin-arm64 -j darwin-arm64.zip ffmpeg
 	rm darwin-arm64.zip
+	chmod u+x resources/darwin-arm64/ffmpeg
 
 resources/darwin-arm64/ffprobe:
 	mkdir -p resources/darwin-arm64
 	curl -L -# --compressed -o resources/darwin-arm64/ffprobe 'https://github.com/SavageCore/node-ffprobe-installer/raw/master/platforms/darwin-arm64/ffprobe'
-	chmod +x resources/darwin-x64/ffprobe
+	chmod u+x resources/darwin-arm64/ffprobe
 
 resources/darwin-x64/ffmpeg:
 	echo 'darwin x64'
@@ -18,6 +19,7 @@ resources/darwin-x64/ffmpeg:
 	echo '  extracting'
 	unzip -o -d resources/darwin-x64 -j darwin-x64.zip ffmpeg
 	rm darwin-x64.zip
+	chmod u+x resources/darwin-x64/ffmpeg
 
 resources/darwin-x64/ffprobe:
 	mkdir -p resources/darwin-x64
