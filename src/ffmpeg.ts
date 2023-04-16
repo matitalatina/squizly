@@ -21,7 +21,7 @@ export const ffmpeg = {
     const pathSplit = pathIn.split(".");
     pathSplit.pop();
     const pathOut = pathSplit.join(".") + "-squizly.mp4";
-    const stopCommand = () => command.kill('SIGSTOP');
+    const stopCommand = () => command.kill("SIGTERM");
     command
       .input(pathIn)
       .videoCodec("libx264")

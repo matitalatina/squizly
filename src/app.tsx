@@ -1,4 +1,4 @@
-import { Group, MantineProvider } from "@mantine/core";
+import { Group, MantineProvider, Stack } from "@mantine/core";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Drop } from "./drop";
@@ -8,9 +8,9 @@ export const App = () => {
   return (
     <MantineProvider withNormalizeCSS>
       <GlobalCss />
-      <Group position="center" style={{ height: "100%" }} direction="column">
+      <Stack align="center" style={{ height: "100%" }}>
         <Drop />
-      </Group>
+      </Stack>
     </MantineProvider>
   );
 };

@@ -8,6 +8,10 @@ type StateComplete = {
   state: "COMPLETE";
 };
 
+type StateCancel = {
+  state: "CANCEL";
+};
+
 export type StateProgress = {
   state: "PROGRESS";
   progress: { percent: number };
@@ -17,7 +21,8 @@ export type StateProgress = {
 type State =
   | StateInitial
   | StateComplete
-  | StateProgress;
+  | StateProgress
+  | StateCancel;
 
 export type Video = {
   path: string;
@@ -43,17 +48,28 @@ export function useCompressManager() {
           updateVideoState(nextVideo.path, { state: "COMPLETE" });
         },
         () => {
-          updateVideoState(nextVideo.path, { state: "COMPLETE" });
+          // Stop everything
+          const newQueue = queue.map(v => v.path === nextVideo.path ? { ...v, state: { state: "CANCEL" as const } } : v);
+          setQueue(newQueue.map(v => v.state.state === "INITIAL" ? ({ ...v, state: { state: "CANCEL" as const } }) : v));
         }
       );
     }
   }, [queue]);
   const onNewVideos = (paths: string[]) => {
-    setQueue([...queue, ...paths.map(p => ({ path: p, state: { state: "INITIAL" as const } }))]);
+    const videosPathsAlreadyDone = queue
+      .filter(v => ["PROGRESS", "COMPLETED"].includes(v.state.state))
+      .map(v => v.path);
+    const newPaths = paths.filter(p => videosPathsAlreadyDone.indexOf(p) === -1);
+    setQueue([
+      ...queue.filter(v => !(v.state.state === "CANCEL" && newPaths.includes(v.path))),
+      ...newPaths.map(p => ({ path: p, state: { state: "INITIAL" as const } }))
+    ]);
   }
 
   const updateVideoState = (path: string, state: State) => {
-    setQueue(queue.map(v => v.path === path ? { ...v, state } : v));
+    const newQueue = queue.map(v => v.path === path ? { ...v, state } : v);
+    setQueue(newQueue);
+    return newQueue;
   }
 
   return {

@@ -8,8 +8,20 @@ The simplest video compressor on macOS.
 
 You can find it in the [releases page](https://github.com/matitalatina/squizly/releases).
 
-- [Squizly for Apple Intel](https://github.com/matitalatina/squizly/releases/download/v1.0.0/Squizly-darwin-x64-1.0.0.zip)
-- [Squizly for Apple Silicon M1](https://github.com/matitalatina/squizly/releases/download/v1.0.0/Squizly-darwin-arm64-1.0.0.zip)
+- [Squizly for Apple Intel](https://github.com/matitalatina/squizly/releases/download/v1.0.1/Squizly-darwin-x64-1.0.1.zip)
+- [Squizly for Apple Silicon M1](https://github.com/matitalatina/squizly/releases/download/v1.0.1/Squizly-darwin-arm64-1.0.1.zip)
+
+## For Apple Silicon M1
+
+When you download the app, extract the Squizly.app. Then, if you try to start it, you'll see the following message.
+
+> “Squizly.app” is damaged and can’t be opened. You should move it to the Bin.
+
+To fix this, open a terminal and run the following command.
+
+```bash
+xattr -r -d com.apple.quarantine /<PATH_TO_APP>/Squizly.app
+```
 
 ## Support my work
 
