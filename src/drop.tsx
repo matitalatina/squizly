@@ -6,10 +6,15 @@ import {
   Progress,
   useMantineTheme,
   Text,
+  RingProgress,
+  Stack,
+  ThemeIcon,
 } from "@mantine/core";
-import React, { Reducer, useEffect, useReducer, useState } from "react";
-import { Check, FileDownload } from "tabler-icons-react";
+import React, { useEffect, useState } from "react";
+import { Check, FileDownload, X } from "tabler-icons-react";
 import { StateProgress, Video, useCompressManager } from "./compressManager";
+import { useHover } from "@mantine/hooks";
+import { ProgressLabel } from "./progressLabel";
 
 type DropStateInitial = {
   state: "INITIAL";
@@ -59,56 +64,53 @@ export const colorFromState = (theme: MantineTheme, state: DropState) => {
   }
 };
 
-function renderDrop(accentColors: string[], dropState: DropState) {
+function renderDrop(accentColors: string[], dropState: DropState, videoToProcess: number) {
+
   if (dropState.state === "PROGRESS") {
-    return <Group direction="column" position="center">
+    const percent = Math.round(dropState.currentVideo.state.progress.percent) || 0;
+    return <Stack align="center">
       <Text size="xl" color={accentColors[5]}>
-        Working on it...{" "}
+        Videos to process: {videoToProcess}
       </Text>
-      <Progress
-        sx={{
-          width: 300,
-        }}
-        value={dropState.currentVideo.state.progress.percent}
-        label={`${Math.round(dropState.currentVideo.state.progress.percent)}%`}
-        size="xl"
-        color={"orange"}
-        striped
-        animate
-      />
-    </Group>
+      <RingProgress
+        size={140}
+        roundCaps
+        rootColor={accentColors[2]}
+        sections={[{ value: percent, color: accentColors[5] }]}
+        label={<ProgressLabel color={accentColors[5]} onStop={dropState.currentVideo.state.stop} percent={percent} />} />
+    </Stack>
   }
   if (dropState.state === "HOVER_FORBIDDEN") {
-    return <Group position="center" direction="column">
+    return <Stack align="center">
       <FileDownload size={100} color={accentColors[2]} />
       <Text size="xl" color={accentColors[5]}>
         The file is not a video
       </Text>
-    </Group>
+    </Stack>
   }
   if (dropState.state === "HOVER_ALLOWED") {
-    return <Group position="center" direction="column">
+    return <Stack align="center">
       <FileDownload size={100} color={accentColors[2]} />
       <Text size="xl" color={accentColors[5]}>
         Drop it!
       </Text>
-    </Group>
+    </Stack>
   }
   if (dropState.state === "COMPLETE") {
-    return <Group position="center" direction="column">
+    return <Stack align="center">
       <Check size={100} color={accentColors[2]} />
       <Text size="xl" color={accentColors[5]}>
         Completed!
       </Text>
-    </Group>
+    </Stack>
   }
   if (dropState.state === "INITIAL") {
-    return <Group position="center" direction="column">
+    return <Stack align="center">
       <FileDownload size={100} color={accentColors[2]} />
       <Text size="xl" color={accentColors[5]}>
         Drop the video here
       </Text>
-    </Group>;
+    </Stack>;
   }
   return null;
 }
@@ -128,6 +130,11 @@ export const Drop = ({ className }: { className?: string }) => {
     } else if (currentVideo?.state?.state === "COMPLETE" && !["HOVER_FORBIDDEN", "HOVER_ALLOWED", "INITIAL"].includes(dropState.state)) {
       setDropState({
         state: "COMPLETE",
+      });
+    }
+    else if (currentVideo === null) {
+      setDropState({
+        state: "INITIAL",
       });
     }
   }, [currentVideo]);
@@ -183,11 +190,10 @@ export const Drop = ({ className }: { className?: string }) => {
           right: 0,
           left: 0,
           bottom: 0,
-          pointerEvents: "none",
         })}
       >
         {/* {JSON.stringify(queue, null, 2)} */}
-        {renderDrop(accentColors, dropState)}
+        {renderDrop(accentColors, dropState, queue.filter((v) => ["INITIAL", "PROGRESS"].includes(v.state.state)).length)}
       </Center>
     </Box>
   );

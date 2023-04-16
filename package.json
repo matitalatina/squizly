@@ -1,7 +1,7 @@
 {
   "name": "squizly",
   "productName": "Squizly",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Compress videos quickly",
   "main": ".webpack/main",
   "scripts": {
@@ -99,12 +99,12 @@
     "typescript": "~4.5.4"
   },
   "dependencies": {
-    "@mantine/core": "^4.0.7",
-    "@mantine/hooks": "^4.0.7",
+    "@mantine/core": "^6.0.7",
+    "@mantine/hooks": "^6.0.7",
     "electron-squirrel-startup": "^1.0.0",
     "fluent-ffmpeg": "^2.1.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "tabler-icons-react": "^1.41.0"
+    "tabler-icons-react": "^1.56.0"
   }
 }
