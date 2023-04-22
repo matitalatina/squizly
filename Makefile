@@ -45,5 +45,6 @@ x64-%: x64-resources
 .package:
 	npx electron-forge package --arch=${ARCH} --platform=darwin
 
+# Example: APPLE_ID=XXX APPLE_PASSWORD=XXX APPLE_TEAM_ID=XXX make arm64-make
 .make:
 	npx electron-forge make --arch=${ARCH} --platform=darwin
