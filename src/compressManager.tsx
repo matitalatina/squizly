@@ -18,59 +18,78 @@ export type StateProgress = {
   stop: () => void;
 };
 
-type State =
-  | StateInitial
-  | StateComplete
-  | StateProgress
-  | StateCancel;
+type State = StateInitial | StateComplete | StateProgress | StateCancel;
 
 export type Video = {
   path: string;
   state: State;
-}
-
+};
 
 export function useCompressManager() {
   const [queue, setQueue] = useState<Video[]>([]);
   useEffect(() => {
-    if (queue.findIndex(v => v.state.state === "PROGRESS") !== -1) {
+    if (queue.findIndex((v) => v.state.state === "PROGRESS") !== -1) {
       return;
     }
-    const nextVideo = queue.find(v => v.state.state === "INITIAL");
+    const nextVideo = queue.find((v) => v.state.state === "INITIAL");
 
     if (nextVideo) {
       window.ffmpeg.start(
         nextVideo.path,
         (p, stop) => {
-          updateVideoState(nextVideo.path, { state: "PROGRESS", progress: p, stop });
+          updateVideoState(nextVideo.path, {
+            state: "PROGRESS",
+            progress: p,
+            stop,
+          });
         },
         () => {
           updateVideoState(nextVideo.path, { state: "COMPLETE" });
         },
         () => {
           // Stop everything
-          const newQueue = queue.map(v => v.path === nextVideo.path ? { ...v, state: { state: "CANCEL" as const } } : v);
-          setQueue(newQueue.map(v => v.state.state === "INITIAL" ? ({ ...v, state: { state: "CANCEL" as const } }) : v));
+          setQueue((queue) => {
+            const newQueue = queue.map((v) =>
+              v.path === nextVideo.path
+                ? { ...v, state: { state: "CANCEL" as const } }
+                : v
+            );
+            return newQueue.map((v) =>
+              v.state.state === "INITIAL"
+                ? { ...v, state: { state: "CANCEL" as const } }
+                : v
+            );
+          });
         }
       );
     }
   }, [queue]);
   const onNewVideos = (paths: string[]) => {
-    const videosPathsAlreadyDone = queue
-      .filter(v => ["PROGRESS", "COMPLETED"].includes(v.state.state))
-      .map(v => v.path);
-    const newPaths = paths.filter(p => videosPathsAlreadyDone.indexOf(p) === -1);
-    setQueue([
-      ...queue.filter(v => !(v.state.state === "CANCEL" && newPaths.includes(v.path))),
-      ...newPaths.map(p => ({ path: p, state: { state: "INITIAL" as const } }))
-    ]);
-  }
+    setQueue((queue) => {
+      const videosPathsAlreadyDone = queue
+        .filter((v) => ["PROGRESS", "COMPLETED"].includes(v.state.state))
+        .map((v) => v.path);
+      const newPaths = paths.filter(
+        (p) => videosPathsAlreadyDone.indexOf(p) === -1
+      );
+
+      return [
+        ...queue.filter(
+          (v) => !(v.state.state === "CANCEL" && newPaths.includes(v.path))
+        ),
+        ...newPaths.map((p) => ({
+          path: p,
+          state: { state: "INITIAL" as const },
+        })),
+      ];
+    });
+  };
 
   const updateVideoState = (path: string, state: State) => {
-    const newQueue = queue.map(v => v.path === path ? { ...v, state } : v);
-    setQueue(newQueue);
-    return newQueue;
-  }
+    setQueue((queue) =>
+      queue.map((v) => (v.path === path ? { ...v, state } : v))
+    );
+  };
 
   return {
     queue,
