@@ -14,7 +14,7 @@ type StateCancel = {
 
 export type StateProgress = {
   state: "PROGRESS";
-  progress: { percent: number };
+  progress: { percent?: number };
   stop: () => void;
 };
 
@@ -36,11 +36,11 @@ export function useCompressManager() {
     if (nextVideo) {
       window.ffmpeg.start(
         nextVideo.path,
-        (p, stop) => {
+        (p) => {
           updateVideoState(nextVideo.path, {
             state: "PROGRESS",
             progress: p,
-            stop,
+            stop: () => window.ffmpeg.stop(),
           });
         },
         () => {
@@ -67,12 +67,11 @@ export function useCompressManager() {
   const onNewVideos = (paths: string[]) => {
     setQueue((queue) => {
       const videosPathsAlreadyDone = queue
-        .filter((v) => ["PROGRESS", "COMPLETED"].includes(v.state.state))
+        .filter((v) => ["PROGRESS", "COMPLETE"].includes(v.state.state))
         .map((v) => v.path);
       const newPaths = paths.filter(
         (p) => videosPathsAlreadyDone.indexOf(p) === -1
       );
-
       return [
         ...queue.filter(
           (v) => !(v.state.state === "CANCEL" && newPaths.includes(v.path))

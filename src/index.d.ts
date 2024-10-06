@@ -1,6 +1,6 @@
-import {ffmpeg} from './ffmpeg'
+import { FfmpegBridge } from "./preload";
 declare global {
-    interface Window {
-        ffmpeg: typeof ffmpeg
-    }
-} 
+  interface Window {
+    ffmpeg: FfmpegBridge;
+  }
+}

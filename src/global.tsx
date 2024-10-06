@@ -1,4 +1,4 @@
-import { Global } from "@mantine/core";
+import { Global } from "@mantine/emotion";
 import React from "react";
 
 export const GlobalCss = () => (

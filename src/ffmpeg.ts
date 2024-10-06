@@ -3,19 +3,20 @@ import { shell } from "electron";
 
 // {"frames":302,"currentFps":57,"currentKbps":553.9,"targetSize":256,"timemark":"00:00:03.78","percent":25.062988993502184}
 export interface FfmpegProgress {
+  pathIn: string;
   frames: number;
   currentFps: number;
   currentKbps: number;
   targetSize: number;
   timemark: string;
-  percent: number;
+  percent?: number;
 }
 export const ffmpeg = {
   start: (
     pathIn: string,
-    onProgress: (progress: FfmpegProgress, stop: () => void) => void,
+    onProgress: (progress: FfmpegProgress) => void,
     onEnd: () => void,
-    onError: () => void,
+    onError: () => void
   ) => {
     const command = Ffmpeg();
     const pathSplit = pathIn.split(".");
@@ -28,7 +29,7 @@ export const ffmpeg = {
       .audioCodec("aac")
       .audioBitrate("128k")
       .addOptions(["-crf 35", "-preset slow"])
-      .on("progress", (p) => onProgress(p, stopCommand))
+      .on("progress", (p) => onProgress({ ...p, pathIn }))
       .on("end", () => {
         shell.showItemInFolder(pathOut);
         onEnd();
@@ -37,11 +38,11 @@ export const ffmpeg = {
       .saveToFile(pathOut);
     command.ffprobe((err, data) => {
       if (err) {
-        console.error(err)
+        console.error(err);
       } else {
-        console.info(data)
+        console.info(data);
       }
-    })
+    });
     return stopCommand;
   },
 };
