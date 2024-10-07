@@ -10,7 +10,12 @@ import {
 } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import { Check, FileDownload } from "tabler-icons-react";
-import { StateProgress, Video, useCompressManager } from "./compressManager";
+import {
+  StateProgress,
+  Video,
+  getVideoToProcessCount,
+  useCompressManager,
+} from "./compressManager";
 import { ProgressLabel } from "./progressLabel";
 
 type DropStateInitial = {
@@ -59,18 +64,14 @@ export const colorFromState = (theme: MantineTheme, state: DropState) => {
   }
 };
 
-function renderDrop(
-  accentColors: MantineColorsTuple,
-  dropState: DropState,
-  videoToProcess: number
-) {
+function renderDrop(accentColors: MantineColorsTuple, dropState: DropState) {
   if (dropState.state === "PROGRESS") {
     const percent =
       Math.round(dropState.currentVideo.state.progress.percent ?? 0) || 0;
     return (
       <Stack align="center" justify="center">
         <Text size="xl" c={accentColors[5]}>
-          Videos to process: {videoToProcess}
+          Videos to process: {dropState.currentVideo.state.videoToProcessCount}
         </Text>
         <RingProgress
           size={140}
@@ -170,15 +171,12 @@ export const Drop = ({ className }: { className?: string }) => {
         const newVideoPaths = Array.from(e.dataTransfer.files)
           .filter((f) => f.type.startsWith("video"))
           .map((f) => f.path);
-        const newUniqueVideos = newVideoPaths.filter(
-          (p) => !queue.map((v) => v.path).includes(p)
-        );
-        if (newVideoPaths.length > 0 && newUniqueVideos.length === 0) {
+        const status = onNewVideos(newVideoPaths);
+        if (status === "NO_NEW_VIDEOS") {
           return setDropState({
             state: "COMPLETE",
           });
         }
-        onNewVideos(newUniqueVideos);
       }}
       onDragOver={(e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -232,12 +230,7 @@ export const Drop = ({ className }: { className?: string }) => {
         })}
       >
         {/* {JSON.stringify(queue, null, 2)} */}
-        {renderDrop(
-          accentColors,
-          dropState,
-          queue.filter((v) => ["INITIAL", "PROGRESS"].includes(v.state.state))
-            .length
-        )}
+        {renderDrop(accentColors, dropState)}
       </Center>
     </Box>
   );

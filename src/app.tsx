@@ -1,10 +1,10 @@
 import { MantineProvider, Stack } from "@mantine/core";
+import "@mantine/core/styles.css";
+import { emotionTransform, MantineEmotionProvider } from "@mantine/emotion";
 import * as React from "react";
-import * as ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { Drop } from "./drop";
 import { GlobalCss } from "./global";
-import { emotionTransform, MantineEmotionProvider } from "@mantine/emotion";
-import "@mantine/core/styles.css";
 
 export const App = () => {
   return (
@@ -20,7 +20,9 @@ export const App = () => {
 };
 
 function render() {
-  ReactDOM.render(<App />, document.getElementById("root"));
+  const container = document.getElementById("root") as HTMLElement;
+  const root = createRoot(container);
+  root.render(<App />);
 }
 
 render();

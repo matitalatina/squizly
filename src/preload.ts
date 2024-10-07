@@ -12,6 +12,7 @@ export type FfmpegBridge = {
     onError: () => void
   ) => void;
   stop: () => void;
+  notifyVideoToProcessCount: (count: number) => void;
 };
 
 const bridge: FfmpegBridge = {
@@ -21,16 +22,28 @@ const bridge: FfmpegBridge = {
     onEnd: () => void,
     onError: () => void
   ) => {
-    ipcRenderer.send("ffmpeg-start", pathIn);
-    ipcRenderer.on("ffmpeg-progress", (_, progress) => {
+    const progressListener = (
+      _: Electron.IpcRendererEvent,
+      progress: FfmpegProgress
+    ) => {
       if (progress.pathIn === pathIn) {
         onProgress(progress);
       }
+    };
+    ipcRenderer.send("ffmpeg-start", pathIn);
+    ipcRenderer.on("ffmpeg-progress", progressListener);
+    ipcRenderer.once("ffmpeg-end", () => {
+      ipcRenderer.off("ffmpeg-progress", progressListener);
+      onEnd();
     });
-    ipcRenderer.on("ffmpeg-end", onEnd);
-    ipcRenderer.on("ffmpeg-error", onError);
+    ipcRenderer.once("ffmpeg-error", () => {
+      ipcRenderer.off("ffmpeg-progress", progressListener);
+      onError();
+    });
   },
   stop: () => ipcRenderer.send("ffmpeg-stop"),
+  notifyVideoToProcessCount: (count: number) =>
+    ipcRenderer.send("video-to-process-count", count),
 };
 
 contextBridge.exposeInMainWorld("ffmpeg", bridge);

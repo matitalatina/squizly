@@ -42,19 +42,26 @@ const createWindow = (): void => {
     stopCommand = ffmpeg.start(
       pathIn,
       (progress) => {
+        mainWindow.setProgressBar((progress.percent ?? 0) / 100);
         mainWindow.webContents.send("ffmpeg-progress", progress);
       },
       () => {
-        mainWindow.webContents.send("ffmpeg-end");
+        mainWindow.setProgressBar(-1);
+        mainWindow.webContents.send("ffmpeg-end", pathIn);
       },
       () => {
-        mainWindow.webContents.send("ffmpeg-error");
+        mainWindow.setProgressBar(-1);
+        mainWindow.webContents.send("ffmpeg-error", pathIn);
       }
     );
   });
 
   ipcMain.on("ffmpeg-stop", () => {
     stopCommand?.();
+  });
+
+  ipcMain.on("video-to-process-count", (_, count: number) => {
+    app.dock.setBadge(count ? `${count}` : "");
   });
 
   // and load the index.html of the app.

@@ -15,6 +15,7 @@ type StateCancel = {
 export type StateProgress = {
   state: "PROGRESS";
   progress: { percent?: number };
+  videoToProcessCount: number;
   stop: () => void;
 };
 
@@ -25,6 +26,11 @@ export type Video = {
   state: State;
 };
 
+export function getVideoToProcessCount(queue: Video[]): number {
+  return queue.filter((v) => ["INITIAL", "PROGRESS"].includes(v.state.state))
+    .length;
+}
+
 export function useCompressManager() {
   const [queue, setQueue] = useState<Video[]>([]);
   useEffect(() => {
@@ -32,7 +38,7 @@ export function useCompressManager() {
       return;
     }
     const nextVideo = queue.find((v) => v.state.state === "INITIAL");
-
+    const videoToProcessCount = getVideoToProcessCount(queue);
     if (nextVideo) {
       window.ffmpeg.start(
         nextVideo.path,
@@ -40,6 +46,7 @@ export function useCompressManager() {
           updateVideoState(nextVideo.path, {
             state: "PROGRESS",
             progress: p,
+            videoToProcessCount,
             stop: () => window.ffmpeg.stop(),
           });
         },
@@ -63,15 +70,18 @@ export function useCompressManager() {
         }
       );
     }
+    window.ffmpeg.notifyVideoToProcessCount(videoToProcessCount);
   }, [queue]);
-  const onNewVideos = (paths: string[]) => {
+  const onNewVideos = (paths: string[]): "NO_NEW_VIDEOS" | "NEW_VIDEOS" => {
+    const videosPathsAlreadyDone = queue
+      .filter((v) => ["PROGRESS", "COMPLETE"].includes(v.state.state))
+      .map((v) => v.path);
+
+    const newPaths = paths.filter(
+      (p) => videosPathsAlreadyDone.indexOf(p) === -1
+    );
+
     setQueue((queue) => {
-      const videosPathsAlreadyDone = queue
-        .filter((v) => ["PROGRESS", "COMPLETE"].includes(v.state.state))
-        .map((v) => v.path);
-      const newPaths = paths.filter(
-        (p) => videosPathsAlreadyDone.indexOf(p) === -1
-      );
       return [
         ...queue.filter(
           (v) => !(v.state.state === "CANCEL" && newPaths.includes(v.path))
@@ -82,6 +92,7 @@ export function useCompressManager() {
         })),
       ];
     });
+    return newPaths.length === 0 ? "NO_NEW_VIDEOS" : "NEW_VIDEOS";
   };
 
   const updateVideoState = (path: string, state: State) => {
