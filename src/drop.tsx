@@ -8,15 +8,40 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import React, { useEffect, useState } from "react";
-import { Check, FileDownload } from "tabler-icons-react";
-import {
-  StateProgress,
-  Video,
-  getVideoToProcessCount,
-  useCompressManager,
-} from "./compressManager";
+import { Check, FileDownload, AlertCircle } from "tabler-icons-react";
+import { StateProgress, Video, useCompressManager } from "./compressManager";
 import { ProgressLabel } from "./progressLabel";
+
+// Helper function to check if a file is a video based on MIME type or extension
+const isVideoFile = (file: File | DataTransferItem): boolean => {
+  if ("type" in file && file.type.startsWith("video")) {
+    return true;
+  }
+
+  // Check file extension for common video formats
+  const fileName = "name" in file ? file.name : "";
+  const videoExtensions = [
+    ".mp4",
+    ".mov",
+    ".avi",
+    ".mkv",
+    ".webm",
+    ".flv",
+    ".wmv",
+    ".ts",
+    ".m2ts",
+    ".mts",
+    ".m4v",
+    ".3gp",
+    ".ogv",
+    ".mpg",
+    ".mpeg",
+  ];
+
+  return videoExtensions.some((ext) => fileName.toLowerCase().endsWith(ext));
+};
 
 type DropStateInitial = {
   state: "INITIAL";
@@ -168,9 +193,38 @@ export const Drop = ({ className }: { className?: string }) => {
       className={className}
       onDrop={(e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-        const newVideoPaths = Array.from(e.dataTransfer.files)
-          .filter((f) => f.type.startsWith("video"))
-          .map((f) => f.path);
+        const allFiles = Array.from(e.dataTransfer.files);
+        const videoFiles = allFiles.filter((f) => isVideoFile(f));
+        const newVideoPaths = videoFiles.map((f) => f.path);
+
+        // Show notification if some files were invalid
+        if (allFiles.length > videoFiles.length) {
+          const invalidCount = allFiles.length - videoFiles.length;
+          notifications.show({
+            title: "Invalid files detected",
+            message: `${invalidCount} file${
+              invalidCount > 1 ? "s are" : " is"
+            } not a valid video format and will be ignored.`,
+            color: "orange",
+            icon: <AlertCircle size={18} />,
+            autoClose: 5000,
+          });
+        }
+
+        // Show notification if no valid videos were dropped
+        if (videoFiles.length === 0) {
+          notifications.show({
+            title: "No valid videos",
+            message: "Please drop video files (mp4, mov, avi, mkv, ts, etc.)",
+            color: "red",
+            icon: <AlertCircle size={18} />,
+            autoClose: 5000,
+          });
+          return setDropState({
+            state: "INITIAL",
+          });
+        }
+
         const status = onNewVideos(newVideoPaths);
         if (status === "NO_NEW_VIDEOS") {
           return setDropState({
@@ -182,14 +236,15 @@ export const Drop = ({ className }: { className?: string }) => {
         e.preventDefault();
       }}
       onDragEnter={(e: React.DragEvent<HTMLDivElement>) => {
+        console.log(Array.from(e.dataTransfer.items).map((f) => f.type));
         e.preventDefault();
+        // Check if there are any file items being dragged
+        // We're permissive here since DataTransferItem doesn't have filename during drag
+        const hasFileItems = Array.from(e.dataTransfer.items).some(
+          (item) => item.kind === "file"
+        );
         setDropState({
-          state:
-            Array.from(e.dataTransfer.items).findIndex((f) =>
-              f.type.startsWith("video")
-            ) !== -1
-              ? "HOVER_ALLOWED"
-              : "HOVER_FORBIDDEN",
+          state: hasFileItems ? "HOVER_ALLOWED" : "HOVER_FORBIDDEN",
         });
       }}
       onDragLeave={(e: React.DragEvent<HTMLDivElement>) => {
@@ -204,7 +259,7 @@ export const Drop = ({ className }: { className?: string }) => {
           state: "INITIAL",
         });
       }}
-      sx={(theme) => ({
+      sx={() => ({
         width: "100%",
         height: "100%",
         transition: "all 300ms ease-out",
@@ -214,7 +269,7 @@ export const Drop = ({ className }: { className?: string }) => {
       })}
     >
       <Center
-        sx={(theme) => ({
+        sx={() => ({
           transition: "all 300ms ease-out",
           border: `5px dashed ${accentColors[2]}`,
           borderRadius: 30,
