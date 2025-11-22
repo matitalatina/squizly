@@ -238,13 +238,15 @@ export const Drop = ({ className }: { className?: string }) => {
       onDragEnter={(e: React.DragEvent<HTMLDivElement>) => {
         console.log(Array.from(e.dataTransfer.items).map((f) => f.type));
         e.preventDefault();
-        // Check if there are any file items being dragged
-        // We're permissive here since DataTransferItem doesn't have filename during drag
-        const hasFileItems = Array.from(e.dataTransfer.items).some(
-          (item) => item.kind === "file"
+        // Check if there are any video file items being dragged
+        // Accept if type starts with "video" or if type is empty (type not always available during drag)
+        const hasVideoItems = Array.from(e.dataTransfer.items).some(
+          (item) =>
+            item.kind === "file" &&
+            (item.type.startsWith("video") || item.type === "")
         );
         setDropState({
-          state: hasFileItems ? "HOVER_ALLOWED" : "HOVER_FORBIDDEN",
+          state: hasVideoItems ? "HOVER_ALLOWED" : "HOVER_FORBIDDEN",
         });
       }}
       onDragLeave={(e: React.DragEvent<HTMLDivElement>) => {

@@ -8,8 +8,8 @@ The simplest video compressor on macOS.
 
 You can find it in the [releases page](https://github.com/matitalatina/squizly/releases).
 
-- [Squizly for Apple Intel](https://github.com/matitalatina/squizly/releases/download/v1.0.2/Squizly-darwin-x64-1.0.2.zip)
-- [Squizly for Apple Silicon](https://github.com/matitalatina/squizly/releases/download/v1.0.2/Squizly-darwin-arm64-1.0.2.zip)
+- [Squizly for Apple Intel](https://github.com/matitalatina/squizly/releases/download/v1.0.3/Squizly-darwin-x64-1.0.3.zip)
+- [Squizly for Apple Silicon](https://github.com/matitalatina/squizly/releases/download/v1.0.3/Squizly-darwin-arm64-1.0.3.zip)
 
 ## Support my work
 

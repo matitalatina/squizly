@@ -1,7 +1,7 @@
 {
   "name": "squizly",
   "productName": "Squizly",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Compress videos quickly",
   "main": ".webpack/main",
   "scripts": {
