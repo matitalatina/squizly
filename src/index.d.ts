@@ -1,10 +1,7 @@
-import { FfmpegBridge } from "./preload";
+import { FfmpegBridge, ElectronBridge } from "./preload";
 declare global {
   interface Window {
     ffmpeg: FfmpegBridge;
-  }
-  // Electron extends the File interface with a path property
-  interface File {
-    path: string;
+    electron: ElectronBridge;
   }
 }

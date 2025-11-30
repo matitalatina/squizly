@@ -33,9 +33,15 @@ const createWindow = (): void => {
   const mainWindow = new BrowserWindow({
     height: 600,
     width: 600,
+    show: false, // Don't show until ready
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
+  });
+
+  // Show window when content is ready (eliminates white flash)
+  mainWindow.once("ready-to-show", () => {
+    mainWindow.show();
   });
 
   ipcMain.on("ffmpeg-start", (event, pathIn: string) => {
@@ -52,7 +58,7 @@ const createWindow = (): void => {
       () => {
         mainWindow.setProgressBar(-1);
         mainWindow.webContents.send("ffmpeg-error", pathIn);
-      }
+      },
     );
   });
 
