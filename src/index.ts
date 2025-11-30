@@ -61,7 +61,7 @@ const createWindow = (): void => {
   });
 
   ipcMain.on("video-to-process-count", (_, count: number) => {
-    app.dock.setBadge(count ? `${count}` : "");
+    app.dock?.setBadge(count ? `${count}` : "");
   });
 
   // and load the index.html of the app.
