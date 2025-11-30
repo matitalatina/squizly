@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from "electron";
+import { contextBridge, ipcRenderer, webUtils } from "electron";
 import { FfmpegProgress } from "./ffmpeg";
 window.addEventListener("DOMContentLoaded", () => {
   console.log("Preload enabled!");
@@ -9,10 +9,14 @@ export type FfmpegBridge = {
     pathIn: string,
     onProgress: (progress: FfmpegProgress) => void,
     onEnd: () => void,
-    onError: () => void
+    onError: () => void,
   ) => void;
   stop: () => void;
   notifyVideoToProcessCount: (count: number) => void;
+};
+
+export type ElectronBridge = {
+  getPathForFile: (file: File) => string;
 };
 
 const bridge: FfmpegBridge = {
@@ -20,11 +24,11 @@ const bridge: FfmpegBridge = {
     pathIn: string,
     onProgress: (progress: FfmpegProgress) => void,
     onEnd: () => void,
-    onError: () => void
+    onError: () => void,
   ) => {
     const progressListener = (
       _: Electron.IpcRendererEvent,
-      progress: FfmpegProgress
+      progress: FfmpegProgress,
     ) => {
       if (progress.pathIn === pathIn) {
         onProgress(progress);
@@ -46,4 +50,9 @@ const bridge: FfmpegBridge = {
     ipcRenderer.send("video-to-process-count", count),
 };
 
+const electronBridge: ElectronBridge = {
+  getPathForFile: (file: File) => webUtils.getPathForFile(file),
+};
+
 contextBridge.exposeInMainWorld("ffmpeg", bridge);
+contextBridge.exposeInMainWorld("electron", electronBridge);

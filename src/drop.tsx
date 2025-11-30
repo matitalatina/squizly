@@ -195,7 +195,9 @@ export const Drop = ({ className }: { className?: string }) => {
         e.preventDefault();
         const allFiles = Array.from(e.dataTransfer.files);
         const videoFiles = allFiles.filter((f) => isVideoFile(f));
-        const newVideoPaths = videoFiles.map((f) => f.path);
+        const newVideoPaths = videoFiles.map((f) =>
+          window.electron.getPathForFile(f),
+        );
 
         // Show notification if some files were invalid
         if (allFiles.length > videoFiles.length) {
@@ -243,7 +245,7 @@ export const Drop = ({ className }: { className?: string }) => {
         const hasVideoItems = Array.from(e.dataTransfer.items).some(
           (item) =>
             item.kind === "file" &&
-            (item.type.startsWith("video") || item.type === "")
+            (item.type.startsWith("video") || item.type === ""),
         );
         setDropState({
           state: hasVideoItems ? "HOVER_ALLOWED" : "HOVER_FORBIDDEN",

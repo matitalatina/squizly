@@ -21,8 +21,8 @@ function initializeFfmpeg() {
 initializeFfmpeg();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 if (require("electron-squirrel-startup")) {
-  // eslint-disable-line global-require
   app.quit();
 }
 
@@ -33,9 +33,15 @@ const createWindow = (): void => {
   const mainWindow = new BrowserWindow({
     height: 600,
     width: 600,
+    show: false, // Don't show until ready
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
+  });
+
+  // Show window when content is ready (eliminates white flash)
+  mainWindow.once("ready-to-show", () => {
+    mainWindow.show();
   });
 
   ipcMain.on("ffmpeg-start", (event, pathIn: string) => {
@@ -52,7 +58,7 @@ const createWindow = (): void => {
       () => {
         mainWindow.setProgressBar(-1);
         mainWindow.webContents.send("ffmpeg-error", pathIn);
-      }
+      },
     );
   });
 
@@ -61,7 +67,7 @@ const createWindow = (): void => {
   });
 
   ipcMain.on("video-to-process-count", (_, count: number) => {
-    app.dock.setBadge(count ? `${count}` : "");
+    app.dock?.setBadge(count ? `${count}` : "");
   });
 
   // and load the index.html of the app.

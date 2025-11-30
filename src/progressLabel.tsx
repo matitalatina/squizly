@@ -13,7 +13,7 @@ export function ProgressLabel({
   onStop,
   percent,
   color,
-}: ProgressLabelProps): JSX.Element {
+}: ProgressLabelProps): React.JSX.Element {
   const { hovered, ref } = useHover();
 
   return (
