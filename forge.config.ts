@@ -7,6 +7,8 @@ import { AutoUnpackNativesPlugin } from "@electron-forge/plugin-auto-unpack-nati
 import { WebpackPlugin } from "@electron-forge/plugin-webpack";
 import { FusesPlugin } from "@electron-forge/plugin-fuses";
 import { FuseV1Options, FuseVersion } from "@electron/fuses";
+import * as path from "path";
+import * as fs from "fs/promises";
 
 import { mainConfig } from "./webpack.main.config";
 import { rendererConfig } from "./webpack.renderer.config";
@@ -15,12 +17,47 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     icon: "resources/icon",
-    extraResource: ["resources/mac/ffmpeg", "resources/mac/ffprobe"],
     osxSign: {},
     osxNotarize: {
       appleId: process.env.APPLE_ID ?? "",
       appleIdPassword: process.env.APPLE_PASSWORD ?? "",
       teamId: process.env.APPLE_TEAM_ID ?? "",
+    },
+  },
+  hooks: {
+    packageAfterCopy: async (
+      _config,
+      buildPath,
+      _electronVersion,
+      platform,
+      arch,
+    ) => {
+      if (platform !== "darwin") return;
+
+      const resourceDir = path.join(
+        process.cwd(),
+        "resources",
+        `${platform}-${arch}`,
+      );
+      const targetDir = path.join(buildPath, "..");
+
+      await fs.mkdir(targetDir, { recursive: true });
+
+      const binaries = ["ffmpeg", "ffprobe"];
+      await Promise.all(
+        binaries.map(async (binary) => {
+          const src = path.join(resourceDir, binary);
+          const dest = path.join(targetDir, binary);
+
+          try {
+            await fs.copyFile(src, dest);
+            await fs.chmod(dest, 0o755);
+            console.log(`Copied ${binary} for ${platform}-${arch}`);
+          } catch {
+            console.warn(`Warning: ${src} not found`);
+          }
+        }),
+      );
     },
   },
   rebuildConfig: {},

@@ -13,7 +13,7 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 function initializeFfmpeg() {
   const resourcePath = isProduction()
     ? process.resourcesPath
-    : join(__dirname, "../../resources/mac");
+    : join(__dirname, `../../resources/${process.platform}-${process.arch}`);
   Ffmpeg.setFfmpegPath(join(resourcePath, "ffmpeg"));
   Ffmpeg.setFfprobePath(join(resourcePath, "ffprobe"));
 }

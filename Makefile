@@ -26,21 +26,14 @@ resources/darwin-x64/ffprobe:
 	curl -L -# --compressed -o resources/darwin-x64/ffprobe 'https://github.com/joshwnj/ffprobe-static/raw/master/bin/darwin/x64/ffprobe'
 	chmod u+x resources/darwin-x64/ffprobe
 
-arm64-resources: resources/darwin-arm64/ffmpeg resources/darwin-arm64/ffprobe
-	mkdir -p resources/mac/
-	ln -f "${PWD}/resources/darwin-arm64/ffmpeg" 'resources/mac/ffmpeg'
-	ln -f "${PWD}/resources/darwin-arm64/ffprobe" 'resources/mac/ffprobe'
-
-x64-resources: resources/darwin-x64/ffmpeg resources/darwin-x64/ffprobe
-	mkdir -p resources/mac/
-	ln -f "${PWD}/resources/darwin-x64/ffmpeg" 'resources/mac/ffmpeg'
-	ln -f "${PWD}/resources/darwin-x64/ffprobe" 'resources/mac/ffprobe'
-
-arm64-%: arm64-resources
+arm64-%: resources/darwin-arm64/ffmpeg resources/darwin-arm64/ffprobe
 	${MAKE} .$* ARCH=arm64
 
-x64-%: x64-resources
+x64-%: resources/darwin-x64/ffmpeg resources/darwin-x64/ffprobe
 	${MAKE} .$* ARCH=x64
+
+download-all: resources/darwin-arm64/ffmpeg resources/darwin-arm64/ffprobe \
+              resources/darwin-x64/ffmpeg resources/darwin-x64/ffprobe
 
 .package:
 	npx electron-forge package --arch=${ARCH} --platform=darwin
