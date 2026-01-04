@@ -1,8 +1,8 @@
 import {
   Box,
   Center,
-  MantineColorsTuple,
-  MantineTheme,
+  type MantineColorsTuple,
+  type MantineTheme,
   RingProgress,
   Stack,
   Text,
@@ -11,7 +11,11 @@ import {
 import { notifications } from "@mantine/notifications";
 import React, { useEffect, useState } from "react";
 import { Check, FileDownload, AlertCircle } from "tabler-icons-react";
-import { StateProgress, Video, useCompressManager } from "./compressManager";
+import {
+  type StateProgress,
+  type Video,
+  useCompressManager,
+} from "./compressManager";
 import { ProgressLabel } from "./progressLabel";
 
 // Helper function to check if a file is a video based on MIME type or extension

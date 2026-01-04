@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer, webUtils } from "electron";
-import { FfmpegProgress } from "./ffmpeg";
+import type { FfmpegProgress } from "./ffmpeg.types";
+
 window.addEventListener("DOMContentLoaded", () => {
   console.log("Preload enabled!");
 });
