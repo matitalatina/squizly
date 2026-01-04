@@ -15,7 +15,7 @@ const rendererRules = [
     },
   },
   {
-    test: /\.css$/,
+    test: /\.css$/i,
     use: [{ loader: "style-loader" }, { loader: "css-loader" }],
   },
 ];

@@ -4,5 +4,11 @@
   },
   "editor.formatOnSave": true,
   "editor.bracketPairColorization.enabled": true,
-  "editor.language.colorizedBracketPairs": true
+  "cssVariables.lookupFiles": [
+    "**/*.css",
+    "**/*.scss",
+    "**/*.sass",
+    "**/*.less",
+    "node_modules/@mantine/core/styles.css"
+  ]
 }

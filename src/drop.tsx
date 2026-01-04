@@ -190,7 +190,15 @@ export const Drop = ({ className }: { className?: string }) => {
 
   return (
     <Box
-      className={className}
+      className={`${className}`}
+      style={{
+        backgroundColor: accentColors[1],
+        width: "100%",
+        height: "100%",
+        transition: "all 300ms ease-out",
+        padding: 0,
+        margin: 0,
+      }}
       onDrop={(e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         const allFiles = Array.from(e.dataTransfer.files);
@@ -263,17 +271,9 @@ export const Drop = ({ className }: { className?: string }) => {
           state: "INITIAL",
         });
       }}
-      sx={() => ({
-        width: "100%",
-        height: "100%",
-        transition: "all 300ms ease-out",
-        backgroundColor: accentColors[1],
-        padding: 0,
-        margin: 0,
-      })}
     >
       <Center
-        sx={() => ({
+        style={{
           transition: "all 300ms ease-out",
           border: `5px dashed ${accentColors[2]}`,
           borderRadius: 30,
@@ -286,7 +286,7 @@ export const Drop = ({ className }: { className?: string }) => {
           left: 0,
           bottom: 0,
           pointerEvents: dropState.state !== "PROGRESS" ? "none" : "auto",
-        })}
+        }}
       >
         {/* {JSON.stringify(queue, null, 2)} */}
         {renderDrop(accentColors, dropState)}

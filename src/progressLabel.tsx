@@ -27,7 +27,7 @@ export function ProgressLabel({
           size="xl"
           ta="center"
           fw={700}
-          sx={{ pointerEvents: "none" }}
+          style={{ pointerEvents: "none" }}
           c="orange"
         >
           {percent}%
