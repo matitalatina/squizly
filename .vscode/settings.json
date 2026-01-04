@@ -10,5 +10,6 @@
     "**/*.sass",
     "**/*.less",
     "node_modules/@mantine/core/styles.css"
-  ]
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
