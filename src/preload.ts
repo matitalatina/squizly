@@ -55,4 +55,11 @@ const electronBridge: ElectronBridge = {
 };
 
 contextBridge.exposeInMainWorld("ffmpeg", bridge);
-contextBridge.exposeInMainWorld("electron", electronBridge);
+contextBridge.exposeInMainWorld("electronUtils", electronBridge);
+
+declare global {
+  interface Window {
+    ffmpeg: FfmpegBridge;
+    electronUtils: ElectronBridge;
+  }
+}

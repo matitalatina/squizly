@@ -204,7 +204,7 @@ export const Drop = ({ className }: { className?: string }) => {
         const allFiles = Array.from(e.dataTransfer.files);
         const videoFiles = allFiles.filter((f) => isVideoFile(f));
         const newVideoPaths = videoFiles.map((f) =>
-          window.electron.getPathForFile(f),
+          window.electronUtils.getPathForFile(f),
         );
 
         // Show notification if some files were invalid
