@@ -14,6 +14,7 @@ import { Check, FileDownload, AlertCircle } from "tabler-icons-react";
 import {
   type StateProgress,
   type Video,
+  getVideoToProcessCount,
   useCompressManager,
 } from "./compressManager";
 import { ProgressLabel } from "./progressLabel";
@@ -94,14 +95,18 @@ export const colorFromState = (theme: MantineTheme, state: DropState) => {
   }
 };
 
-function renderDrop(accentColors: MantineColorsTuple, dropState: DropState) {
+function renderDrop(
+  accentColors: MantineColorsTuple,
+  dropState: DropState,
+  videoToProcessCount: number,
+) {
   if (dropState.state === "PROGRESS") {
     const percent =
       Math.round(dropState.currentVideo.state.progress.percent ?? 0) || 0;
     return (
       <Stack align="center" justify="center">
         <Text size="xl" c={accentColors[5]}>
-          Videos to process: {dropState.currentVideo.state.videoToProcessCount}
+          Videos to process: {videoToProcessCount}
         </Text>
         <RingProgress
           size={140}
@@ -161,13 +166,17 @@ function renderDrop(accentColors: MantineColorsTuple, dropState: DropState) {
   }
   return null;
 }
+
 export const Drop = () => {
   const [dropState, setDropState] = useState<DropState>({ state: "INITIAL" });
   const { queue, onNewVideos } = useCompressManager();
+
+  const videoToProcessCount = getVideoToProcessCount(queue);
   const currentVideo: Video | null =
     queue.find((v) => v.state.state === "PROGRESS") ??
     queue.find((v) => v.state.state === "COMPLETE") ??
     null;
+
   useEffect(() => {
     if (currentVideo?.state?.state === "PROGRESS") {
       setDropState({
@@ -280,7 +289,7 @@ export const Drop = () => {
         }}
       >
         {/* {JSON.stringify(queue, null, 2)} */}
-        {renderDrop(accentColors, dropState)}
+        {renderDrop(accentColors, dropState, videoToProcessCount)}
       </Center>
     </Box>
   );
