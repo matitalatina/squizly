@@ -26,7 +26,7 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
-let stopCommand: () => void;
+let stopCommand: (() => void) | null = null;
 
 const createWindow = (): void => {
   // Create the browser window.

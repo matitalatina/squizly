@@ -15,6 +15,7 @@
     "verbatimModuleSyntax": true,
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
+    "strict": true,
     "jsx": "react-jsx"
   },
   "include": ["src/**/*"]
