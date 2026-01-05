@@ -80,6 +80,8 @@ type DropState =
   | DropHoverAllowed
   | DropHoverForbidden;
 
+type DragOperationsState = DropHoverAllowed | DropHoverForbidden | null;
+
 export const colorFromState = (theme: MantineTheme, state: DropState) => {
   switch (state.state) {
     case "INITIAL":
@@ -168,7 +170,8 @@ function renderDrop(
 }
 
 export const Drop = () => {
-  const [dropState, setDropState] = useState<DropState>({ state: "INITIAL" });
+  const [dragOperationState, setDragOperationState] =
+    useState<DragOperationsState>(null);
   const { queue, onNewVideos } = useCompressManager();
 
   const videoToProcessCount = getVideoToProcessCount(queue);
@@ -177,34 +180,25 @@ export const Drop = () => {
     queue.find((v) => v.state.state === "COMPLETE") ??
     null;
 
-  if (
-    currentVideo?.state?.state === "PROGRESS" &&
-    !(
-      dropState.state == "PROGRESS" &&
-      dropState.currentVideo.path == currentVideo.path &&
-      dropState.currentVideo.state == currentVideo.state
-    )
-  ) {
-    setDropState({
+  let dropState: DropState;
+  if (currentVideo?.state?.state === "PROGRESS") {
+    dropState = {
       state: "PROGRESS",
       currentVideo: {
         path: currentVideo.path,
         state: currentVideo.state,
       },
-    });
-  } else if (!["HOVER_FORBIDDEN", "HOVER_ALLOWED"].includes(dropState.state)) {
-    if (
-      currentVideo?.state?.state === "COMPLETE" &&
-      dropState.state !== "COMPLETE"
-    ) {
-      setDropState({
-        state: "COMPLETE",
-      });
-    } else if (currentVideo === null && dropState.state !== "INITIAL") {
-      setDropState({
-        state: "INITIAL",
-      });
-    }
+    };
+  } else if (dragOperationState !== null) {
+    dropState = dragOperationState;
+  } else if (currentVideo?.state?.state === "COMPLETE") {
+    dropState = {
+      state: "COMPLETE",
+    };
+  } else {
+    dropState = {
+      state: "INITIAL",
+    };
   }
 
   const theme = useMantineTheme();
@@ -247,17 +241,11 @@ export const Drop = () => {
             icon: <AlertCircle size={18} />,
             autoClose: 5000,
           });
-          return setDropState({
-            state: "INITIAL",
-          });
+        } else {
+          onNewVideos(newVideoPaths);
         }
 
-        const status = onNewVideos(newVideoPaths);
-        if (status === "NO_NEW_VIDEOS") {
-          return setDropState({
-            state: "COMPLETE",
-          });
-        }
+        setDragOperationState(null);
       }}
       onDragOver={(e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -272,28 +260,20 @@ export const Drop = () => {
             item.kind === "file" &&
             (item.type.startsWith("video") || item.type === ""),
         );
-        setDropState({
+        setDragOperationState({
           state: hasVideoItems ? "HOVER_ALLOWED" : "HOVER_FORBIDDEN",
         });
       }}
       onDragLeave={(e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-        setDropState({
-          state: "INITIAL",
-        });
-      }}
-      onDragEnd={(e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        setDropState({
-          state: "INITIAL",
-        });
+        setDragOperationState(null);
       }}
     >
       <Center
         className={classes.innerDropArea}
         style={{
           border: `5px dashed ${accentColors[2]}`,
-          pointerEvents: dropState.state !== "PROGRESS" ? "none" : "auto",
+          pointerEvents: dropState?.state !== "PROGRESS" ? "none" : "auto",
         }}
       >
         {/* {JSON.stringify(queue, null, 2)} */}
