@@ -17,6 +17,7 @@ import {
   useCompressManager,
 } from "./compressManager";
 import { ProgressLabel } from "./progressLabel";
+import * as classes from "./drop.module.css";
 
 // Helper function to check if a file is a video based on MIME type or extension
 const isVideoFile = (file: File | DataTransferItem): boolean => {
@@ -160,7 +161,7 @@ function renderDrop(accentColors: MantineColorsTuple, dropState: DropState) {
   }
   return null;
 }
-export const Drop = ({ className }: { className?: string }) => {
+export const Drop = () => {
   const [dropState, setDropState] = useState<DropState>({ state: "INITIAL" });
   const { queue, onNewVideos } = useCompressManager();
   const currentVideo: Video | null =
@@ -194,14 +195,9 @@ export const Drop = ({ className }: { className?: string }) => {
 
   return (
     <Box
-      className={`${className}`}
+      className={classes.dropArea}
       style={{
         backgroundColor: accentColors[1],
-        width: "100%",
-        height: "100%",
-        transition: "all 300ms ease-out",
-        padding: 0,
-        margin: 0,
       }}
       onDrop={(e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -277,18 +273,9 @@ export const Drop = ({ className }: { className?: string }) => {
       }}
     >
       <Center
+        className={classes.innerDropArea}
         style={{
-          transition: "all 300ms ease-out",
           border: `5px dashed ${accentColors[2]}`,
-          borderRadius: 30,
-          padding: 0,
-          margin: 10,
-          boxSizing: "border-box",
-          position: "absolute",
-          top: 0,
-          right: 0,
-          left: 0,
-          bottom: 0,
           pointerEvents: dropState.state !== "PROGRESS" ? "none" : "auto",
         }}
       >
