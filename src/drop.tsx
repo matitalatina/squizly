@@ -9,7 +9,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { Check, FileDownload, AlertCircle } from "tabler-icons-react";
 import {
   type StateProgress,
@@ -177,28 +177,36 @@ export const Drop = () => {
     queue.find((v) => v.state.state === "COMPLETE") ??
     null;
 
-  useEffect(() => {
-    if (currentVideo?.state?.state === "PROGRESS") {
-      setDropState({
-        state: "PROGRESS",
-        currentVideo: {
-          path: currentVideo.path,
-          state: currentVideo.state,
-        },
-      });
-    } else if (
+  if (
+    currentVideo?.state?.state === "PROGRESS" &&
+    !(
+      dropState.state == "PROGRESS" &&
+      dropState.currentVideo.path == currentVideo.path &&
+      dropState.currentVideo.state == currentVideo.state
+    )
+  ) {
+    setDropState({
+      state: "PROGRESS",
+      currentVideo: {
+        path: currentVideo.path,
+        state: currentVideo.state,
+      },
+    });
+  } else if (!["HOVER_FORBIDDEN", "HOVER_ALLOWED"].includes(dropState.state)) {
+    if (
       currentVideo?.state?.state === "COMPLETE" &&
-      !["HOVER_FORBIDDEN", "HOVER_ALLOWED", "INITIAL"].includes(dropState.state)
+      dropState.state !== "COMPLETE"
     ) {
       setDropState({
         state: "COMPLETE",
       });
-    } else if (currentVideo === null) {
+    } else if (currentVideo === null && dropState.state !== "INITIAL") {
       setDropState({
         state: "INITIAL",
       });
     }
-  }, [currentVideo]);
+  }
+
   const theme = useMantineTheme();
   const accentColors = colorFromState(theme, dropState);
 
