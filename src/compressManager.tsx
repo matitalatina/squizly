@@ -106,7 +106,9 @@ export function useCompressManager() {
 
   const onNewVideos = (paths: string[]): "NO_NEW_VIDEOS" | "NEW_VIDEOS" => {
     const videosPathsAlreadyDone = queue
-      .filter((v) => ["PROGRESS", "COMPLETE"].includes(v.state.state))
+      .filter((v) =>
+        ["PROGRESS", "COMPLETE", "INITIAL"].includes(v.state.state),
+      )
       .map((v) => v.path);
 
     const newPaths = paths.filter(

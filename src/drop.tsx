@@ -181,7 +181,10 @@ export const Drop = () => {
     null;
 
   let dropState: DropState;
-  if (currentVideo?.state?.state === "PROGRESS") {
+
+  if (dragOperationState !== null) {
+    dropState = dragOperationState;
+  } else if (currentVideo?.state?.state === "PROGRESS") {
     dropState = {
       state: "PROGRESS",
       currentVideo: {
@@ -189,8 +192,6 @@ export const Drop = () => {
         state: currentVideo.state,
       },
     };
-  } else if (dragOperationState !== null) {
-    dropState = dragOperationState;
   } else if (currentVideo?.state?.state === "COMPLETE") {
     dropState = {
       state: "COMPLETE",
@@ -251,22 +252,34 @@ export const Drop = () => {
         e.preventDefault();
       }}
       onDragEnter={(e: React.DragEvent<HTMLDivElement>) => {
-        console.log(Array.from(e.dataTransfer.items).map((f) => f.type));
         e.preventDefault();
-        // Check if there are any video file items being dragged
-        // Accept if type starts with "video" or if type is empty (type not always available during drag)
-        const hasVideoItems = Array.from(e.dataTransfer.items).some(
-          (item) =>
-            item.kind === "file" &&
-            (item.type.startsWith("video") || item.type === ""),
-        );
-        setDragOperationState({
-          state: hasVideoItems ? "HOVER_ALLOWED" : "HOVER_FORBIDDEN",
-        });
+        // Only clear if the related target is not a child of the drop area
+        const dropArea = e.currentTarget;
+        const relatedTarget = e.relatedTarget as Node;
+
+        if (!relatedTarget || !dropArea.contains(relatedTarget)) {
+          console.log(Array.from(e.dataTransfer.items).map((f) => f.type));
+          // Check if there are any video file items being dragged
+          // Accept if type starts with "video" or if type is empty (type not always available during drag)
+          const hasVideoItems = Array.from(e.dataTransfer.items).some(
+            (item) =>
+              item.kind === "file" &&
+              (item.type.startsWith("video") || item.type === ""),
+          );
+          setDragOperationState({
+            state: hasVideoItems ? "HOVER_ALLOWED" : "HOVER_FORBIDDEN",
+          });
+        }
       }}
       onDragLeave={(e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-        setDragOperationState(null);
+        // Only clear if the related target is not a child of the drop area
+        const dropArea = e.currentTarget;
+        const relatedTarget = e.relatedTarget as Node;
+
+        if (!relatedTarget || !dropArea.contains(relatedTarget)) {
+          setDragOperationState(null);
+        }
       }}
     >
       <Center
