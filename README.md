@@ -29,3 +29,7 @@ Icon provided by <a href="https://www.flaticon.com/free-icons/compress" title="c
 ## Appendix
 
 - [Sign macOS app](https://www.electronforge.io/guides/code-signing/code-signing-macos)
+
+## Troubleshooting
+
+- _When I run `npm run start`, the renderer breaks because it doesn't fine `__dirname`:_ Make sure `@vercel/webpack-asset-relocator-loader` has fixed version `1.7.3` in your `package.json`. [Here's](https://www.electronforge.io/config/plugins/webpack#native-node-modules) the explanation.

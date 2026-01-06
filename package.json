@@ -1,8 +1,12 @@
 {
   "name": "squizly",
   "productName": "Squizly",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Compress videos quickly",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/matitalatina/squizly.git"
+  },
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -32,18 +36,18 @@
     "@electron-forge/plugin-fuses": "^7.10.2",
     "@electron-forge/plugin-webpack": "^7.10.2",
     "@electron/fuses": "^1.8.0",
-    "@electron/notarize": "^2.5.0",
-    "@electron/osx-sign": "^1.3.3",
-    "@eslint/js": "^9.39.1",
+    "@electron/notarize": "^3.1.1",
+    "@electron/osx-sign": "^2.3.0",
+    "@eslint/js": "^9.39.2",
     "@types/fluent-ffmpeg": "^2.1.28",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@typescript-eslint/eslint-plugin": "^8.48.0",
-    "@typescript-eslint/parser": "^8.48.0",
-    "@vercel/webpack-asset-relocator-loader": "^1.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.52.0",
+    "@typescript-eslint/parser": "^8.52.0",
+    "@vercel/webpack-asset-relocator-loader": "1.7.3",
     "css-loader": "^7.1.2",
-    "electron": "^39.2.4",
-    "eslint": "^9.39.1",
+    "electron": "^39.2.7",
+    "eslint": "^9.39.2",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
     "fork-ts-checker-webpack-plugin": "^9.1.0",
@@ -54,16 +58,16 @@
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.4",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.48.0"
+    "typescript-eslint": "^8.52.0"
   },
   "dependencies": {
-    "@mantine/core": "^8.3.9",
-    "@mantine/hooks": "^8.3.9",
-    "@mantine/notifications": "^8.3.9",
+    "@mantine/core": "^8.3.11",
+    "@mantine/hooks": "^8.3.11",
+    "@mantine/notifications": "^8.3.11",
     "electron-squirrel-startup": "^1.0.1",
     "fluent-ffmpeg": "^2.1.3",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "tabler-icons-react": "^1.56.0"
   }
 }
